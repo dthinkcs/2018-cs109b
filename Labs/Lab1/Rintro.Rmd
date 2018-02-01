@@ -1,12 +1,14 @@
 ---
-title: "CS109B Lab 0: Intro to R and Rstudio"
-output: 
+title: 'CS109B Lab 0: Intro to R and Rstudio'
+output:
+  pdf_document:
+    toc: yes
   html_document:
-    theme: flatly
     highlight: tango
-    toc: true
+    theme: flatly
+    toc: yes
     toc_float:
-      collapsed: true
+      collapsed: yes
 ---
 
 R/Rstudio Installation
