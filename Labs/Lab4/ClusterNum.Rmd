@@ -107,7 +107,7 @@ Since there is no best way of choosing the number of clusters, we can aggregate 
 ```{r}
 cw.agg<-NbClust(scale(civilWar),method='kmeans',index='alllong')
 #Data needs to be scaled for some methods
-fviz_nbclust(cw.agg) + theme_minimal()
+fviz_nbclust(cw.agg) + theme_minimal() # kl and ch giving 0 as best k
 ```
 
 Most of the methods choose 2. Let's re-fit our k-means so that $k=2$.
@@ -167,17 +167,27 @@ tweet.num<-tweets[num.vars]
 ```
 1.  Using the elbow method, what is the optimal number of clusters?
 ```{r}
-
+pm <- pam(tweet.num, k=2, metric = 'manhattan')
+fviz_nbclust(tweet.num,pam, metric='manhattan')+ggtitle('PAM clustering for Civil War Data')
 ```
+
+**Ans** Optimal number = 2
+
 
 2.  Using the silhouette method, what is the optimal number of clusters?
 
 ```{r}
-
+fviz_silhouette(pam(tweet.num, k=2, metric = 'manhattan'))+ggtitle('PAM clustering for Civil War Data')
 ```
+
+**Ans** Optimal number = 2
+
 
 3.  Interpret the graph created via the gap statistic method. What is the optimal number of clusters?
 ![](gapTrump_num.png)
+
+**Ans** Optimal number = 1
+
 
 We must set **d.power=2** in the function `clusGap()` and **method='Tibs2001SEmax'** in the function `fviz_gap_stat()` to use the same GAP method mark used in class.
 
@@ -201,7 +211,7 @@ inds.k<-c()
 for(ii in inds){
   
   ## FINISH THIS LINE HERE
-  tweets.nbc<-
+  tweets.nbc<-NbClust(tweet.num, method = ii)
   #####
     
     cat("index = ", ii, ":\n")
@@ -220,15 +230,16 @@ ggplot(data.frame(k=inds.k),aes(x=k))+
 
 5.  Based on the results from above, what is the optimal number of clusters for K-mediods clustering? Run k-medoids clustering using the optimal number of clusters $K$ and visualized your results.
 
- 
-
 ```{r}
-
+tweets.med <- kmedoids(tweet.num, 2)
+fviz_nbclust(tweet.num, kmedoids, metric='manhattan')+ggtitle('KMedoids clustering for Civil War Data')
 ```
+
+
 6. Use a silhouette plot to determine if any observations were missclustered.
 
 ```{r}
-
+fviz_silhouette(kmedoids(tweet.num, 2))+ggtitle('KMedoids clustering for Civil War Data')
 ```
 
 
@@ -257,13 +268,28 @@ Note that using categorical factors limit the methods we are able to use to dete
 7.  Using the silhouette method, what is the optimal number of clusters?
 
 ```{r}
-
-
+fviz_silhouette(pam(tweet.num, k=2, metric = 'manhattan'))+ggtitle('PAM clustering for Civil War Data')
 ```
 
 8. Use the `NbClust` function in the `NbClust`  library to aggregate results across all the clustering functions? Using the `NbClust` function with only a distance matrix we are able to use a subset of the indexes: `frey`,`mcclain`,`cindex`,`silhouette`, and `dunn`. 
 
 ```{r}
+inds <- c('frey','mcclain','cindex','silhouette','dunn')
+inds.k<-c()
+for(ii in inds){
+  
+  ## FINISH THIS LINE HERE
+  tweets.nbc<-NbClust(tweet.num, method = ii)
+  #####
+    
+    cat("index = ", ii, ":\n")
+    cat("index values:\n")
+    print(tweets.nbc$All.index)
+    cat("best cluster number:\n")
+    print(tweets.nbc$Best.nc)
+    
+    inds.k<-c(inds.k,tweets.nbc$Best.nc[1])
+}
 
 ```
 
